@@ -20,7 +20,7 @@ namespace API
         {
 
             services.AddControllers();
-            services.AddDbContext<StoreContext>(x => x.UseSqlServer(_config.GetConnectionString("Lenovo-SQLConnection")));
+            services.AddDbContext<StoreContext>(x => x.UseSqlServer(_config.GetConnectionString("DefaultConneciton")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIv5", Version = "v1" });
