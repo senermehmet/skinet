@@ -1,4 +1,3 @@
-using System.Reflection;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -17,13 +16,22 @@ namespace Infrastructure.Data.Config
             builder.HasOne(b => b.ProductBrand).WithMany().HasForeignKey(p => p.ProductBrandId);
             builder.HasOne(t => t.ProductType).WithMany().HasForeignKey(p => p.ProductTypeID);
         }
-         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
 
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    public  class ProductBrandConfiguration : IEntityTypeConfiguration<ProductBrand>
+    {
+        public void Configure(EntityTypeBuilder<ProductBrand> builder)
+        {
+            builder.Property(b =>b.Name).IsRequired().HasMaxLength(100);
         }
-       
+    }
+ public  class ProductTypeConfiguration : IEntityTypeConfiguration<ProductType>
+    {
+        public void Configure(EntityTypeBuilder<ProductType> builder)
+        {
+            builder.Property(t =>t.Name).IsRequired().HasMaxLength(100);
+        }
+    }
+
     }
 
 
