@@ -14,6 +14,31 @@ namespace Infrastructure.Data
         {
             try
             {
+
+
+                if (!context.Products.Any())
+                {
+                    if (!context.ProductTypes.Any())
+                    {
+                        var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
+                        var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
+                        foreach (var typeItem in types)
+                        {
+                            context.ProductTypes.Add(typeItem);
+                        }
+
+                        await context.SaveChangesAsync();
+                    }
+                    var productsData = File.ReadAllText("../Infrastructure/Data/SeedData/products.json");
+                    var products = JsonSerializer.Deserialize<List<Product>>(productsData);
+                    foreach (var productItem in products)
+                    {
+                        context.Products.Add(productItem);
+                    }
+
+                    await context.SaveChangesAsync();
+                }
+
                 if (!context.ProductBrands.Any())
                 {
                     var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
@@ -25,28 +50,6 @@ namespace Infrastructure.Data
                     await context.SaveChangesAsync();
                 }
 
-                if (!context.ProductTypes.Any())
-                {
-                    var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
-                    var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
-                    foreach (var typeItem in types)
-                    {
-                        context.ProductTypes.Add(typeItem);
-                    }
-
-                    await context.SaveChangesAsync();
-                }
-                if (!context.Products.Any())
-                {
-                    var productsData = File.ReadAllText("../Infrastructure/SeedData/products.json");
-                    var products = JsonSerializer.Deserialize<List<Product>>(productsData);
-                    foreach (var productItem in products)
-                    {
-                        context.Products.Add(productItem);
-                    }
-
-                    await context.SaveChangesAsync();
-                }
             }
             catch (System.Exception ex)
             {
