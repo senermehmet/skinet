@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Data
@@ -13,35 +14,52 @@ namespace Infrastructure.Data
             {
                 if (!context.ProductBrands.Any())
                 {
+
+                    using var transaction = context.Database.BeginTransaction();
                     var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
-                    var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
-                    foreach (var item in brands)
+                    var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData); ;
+
+                    foreach (var brand in brands)
                     {
-                        context.ProductBrands.Add(item);
+                        context.ProductBrands.Add(brand);
                     }
+                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT ProductBrands ON");
                     await context.SaveChangesAsync();
-                }
-                if (!context.ProductTypes.Any())
-                {
-                    var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
-                    var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
-                    foreach (var item in types)
-                    {
-                        context.ProductTypes.Add(item);
-                    }
-                    await context.SaveChangesAsync();
+                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT ProductBrands OFF");
+                    transaction.Commit();
+
                 }
 
+                if (!context.ProductTypes.Any())
+                {
+                    using var transaction = context.Database.BeginTransaction();
+                    var typesdata = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
+                    var types = JsonSerializer.Deserialize<List<ProductType>>(typesdata);
+
+                    foreach (var type in types)
+                    {
+                        context.ProductTypes.Add(type);
+                    }
+                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT ProductTypes ON");
+                    await context.SaveChangesAsync();
+                    context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT ProductTypes OFF");
+                    transaction.Commit();
+                }
                 if (!context.Products.Any())
                 {
+                    using var transaction = context.Database.BeginTransaction();
                     var productsData = File.ReadAllText("../Infrastructure/Data/SeedData/products.json");
                     var products = JsonSerializer.Deserialize<List<Product>>(productsData);
-                    foreach (var item in products)
+
+                    foreach (var product in products)
                     {
-                        context.Products.Add(item);
+                        context.Products.Add(product);
                     }
                     await context.SaveChangesAsync();
+                    transaction.Commit();
                 }
+
+
             }
             catch (System.Exception ex)
             {
