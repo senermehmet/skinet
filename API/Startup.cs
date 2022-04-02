@@ -1,8 +1,9 @@
 using API.Helpers;
+using API.Middleware;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
+
 
 namespace API
 
@@ -30,11 +31,16 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
+            app.UseMiddleware<ExceptionMiddleware>();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-              
+
+             /// app.UseSwagger();
+            ///  app.UseSwaggerUI(c=>c.SwaggerEndpoint("/SwaggerBuilderExtensions/v1/SwaggerBuilderExtensions.json","API v1"));
             }
+
+            app.UseStatusCodePagesWithRedirects("/errors/{0}");
 
             app.UseHttpsRedirection();
 
