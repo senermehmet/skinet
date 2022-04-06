@@ -1,6 +1,6 @@
+using API.Extensions;
 using API.Helpers;
 using API.Middleware;
-using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,24 +21,24 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped(typeof(IGenericRepository<>),(typeof(GenericRepository<>)));
+           
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
-            services.AddDbContext<StoreContext>(x => x.UseSqlServer(_config.GetConnectionString("DefaultConneciton")));
+            services.AddDbContext<StoreContext>(x => 
+                x.UseSqlServer(_config.GetConnectionString("DefaultConneciton")));
+
+            services.AddApplicationServices();
+            services.AddSwaggerDocumentation();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             
             app.UseMiddleware<ExceptionMiddleware>();
-            if (env.IsDevelopment())
-            {
 
-             /// app.UseSwagger();
-            ///  app.UseSwaggerUI(c=>c.SwaggerEndpoint("/SwaggerBuilderExtensions/v1/SwaggerBuilderExtensions.json","API v1"));
-            }
+            app.UseSwaggerDocumentation();
 
             app.UseStatusCodePagesWithRedirects("/errors/{0}");
 
