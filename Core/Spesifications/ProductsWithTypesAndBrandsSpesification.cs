@@ -9,10 +9,11 @@ namespace Core.Spesifications
         /// Class <c>ProductsWithTypesAndBrandsSpesification</c> Get All Products With Types and Brands
         /// </summary>
         ///<returns><c>List</c> of Core.Entities.Product</returns>
-        public ProductsWithTypesAndBrandsSpesification()
+        public ProductsWithTypesAndBrandsSpesification(string sort)
         {
             AddInclude(t => t.ProductType);
             AddInclude(b => b.ProductBrand);
+            AddOrderBy(x => x.Name);
         }
 
         /// <summary>
